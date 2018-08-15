@@ -49,10 +49,10 @@ chrome.tabs.onActivated.addListener(function(activeInfo) {
 
 function timeUpdate(urlOfLastTab, startTime, endTime) {
     if (urlOfLastTab == "vk.com") {
-        sendMessage("vkTime", endTime.getTime() - startTime.getTime())
+        sendMessage("vk", endTime.getTime() - startTime.getTime())
     }
     if (urlOfLastTab == "www.youtube.com") {
-        sendMessage("youtubeTime", endTime.getTime() - startTime.getTime())
+        sendMessage("youtube", endTime.getTime() - startTime.getTime())
     }
 }
 
