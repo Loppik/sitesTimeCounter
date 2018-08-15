@@ -7,3 +7,7 @@ function gotMessage(message, sender, sendResponse) {
     /*var oldTime = parseInt(document.querySelector(".vkTime").innerText);
     document.querySelector("vkTime").innerText = oldTime + 12;*/
 }
+
+/*
+    Арсен Силин  (408) 471-6627
+*/

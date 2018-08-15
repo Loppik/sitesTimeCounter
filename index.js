@@ -1,13 +1,15 @@
 console.log("asdfasf");
 
-function updateTime(time) {
+function updateTime(updateTarget, time) {
     var oneHour = 3600000;
     var oneMinute = 60000;
     var oneSecond = 1000;
 
-    var hours = parseInt(document.querySelector(".hours").innerHTML);
-    var minutes = parseInt(document.querySelector(".minutes").innerHTML);
-    var seconds = parseInt(document.querySelector(".seconds").innerHTML);
+    var target = document.getElementById(updateTarget);
+
+    var hours = parseInt(target.querySelector(".hours").innerHTML);
+    var minutes = parseInt(target.querySelector(".minutes").innerHTML);
+    var seconds = parseInt(target.querySelector(".seconds").innerHTML);
     while(time >= oneHour) {
         time -= oneHour;
         hours += 1;
@@ -31,20 +33,19 @@ function updateTime(time) {
         minutes += 1;
     }
 
-    document.querySelector(".hours").innerHTML = hours;
-    document.querySelector(".minutes").innerHTML = minutes;
-    document.querySelector(".seconds").innerHTML = seconds;
+    target.querySelector(".hours").innerHTML = hours;
+    target.querySelector(".minutes").innerHTML = minutes;
+    target.querySelector(".seconds").innerHTML = seconds;
 }
 
 var port = chrome.extension.connect({
-    name: "Sample Connection"
+    name: "Simple Connection"
 });
 
 port.onMessage.addListener(function(msg) {
-    console.log("message recieved: " + msg.msg + ", time: " + msg.time);
+    console.log("message recieved: " + msg.msg + ", target: " + msg.updateTarget + ", time: " + msg.time);
     if (msg.msg == "updateTime") {
-        var time = msg.time;
-        updateTime(time);
+        updateTime(msg.updateTarget, msg.time);
     }
 
     response = {

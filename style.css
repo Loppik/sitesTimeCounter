@@ -3,3 +3,8 @@
     height: 30px;
     display: flex;
 }
+
+#vkTime, #youtubeTime {
+    display: flex;
+    flex-direction: row;
+}
