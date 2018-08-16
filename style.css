@@ -25,3 +25,12 @@
     color: rgb(0, 43, 134);
     margin-left: 5px;
 }
+
+#addbtn {
+    width: 200px;
+    height: 30px;
+    background-color: rgb(0, 190, 0);
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+}

@@ -3,6 +3,17 @@ var startTime = null;
 var endTime = null;
 var urlOfLastTab;
 var observedUrls = ["vk.com", "www.youtube.com"];
+var observedObj = null;
+chrome.storage.local.get("observedObj", function(result) {
+    if (!result["observedObj"]) {
+        chrome.storage.local.set({ observedObj: [] });
+        observedObj = [];
+    } else if(result["observedObj"].length > 0) {
+        observedObj = result["observedObj"];
+    } else {
+        observedObj = [];
+    }
+});
 
 /* Listener of messages from content script 
 chrome.browserAction.onClicked.addListener(function() {
@@ -21,18 +32,18 @@ chrome.tabs.onActivated.addListener(function(activeInfo) {
         endTime = new Date();
         addictionPage = false;
         var url = tabs[0].url;
-        observedUrls.forEach(function(observedUrl) {
-            if (urlOfLastTab == observedUrl) {
+        observedObj.forEach(function(object) {
+            if (urlOfLastTab == object.url) {
                 if (startTime != null) {
                     timeUpdate(urlOfLastTab, startTime, endTime);
                 }
             }
         });
-        observedUrls.forEach(function(observedUrl) {
-            if (url.search(new RegExp(observedUrl)) != -1) {
-                alert(observedUrl);
+        observedObj.forEach(function(object) {
+            if (url.search(new RegExp(object.url)) != -1) {
+                alert(object.name);
                 addictionPage = true;
-                urlOfLastTab = observedUrl;
+                urlOfLastTab = object.url;
             }
         });
 

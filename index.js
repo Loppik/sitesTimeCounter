@@ -38,6 +38,14 @@ function updateTime(updateTarget, time) {
     target.querySelector(".seconds").innerHTML = seconds;
 }
 
+function saveTime(updateTarget) {
+    var target = document.getElementById(updateTarget);
+    var hours = target.querySelector(".hours").innerHTML;
+    var minutes = target.querySelector(".minutes").innerHTML;
+    var seconds = target.querySelector(".seconds").innerHTML;
+    chrome.storage.local.set(updateTarget, hours + ":" + minutes + ":" + seconds);
+}
+
 var port = chrome.extension.connect({
     name: "Simple Connection"
 });
@@ -46,6 +54,7 @@ port.onMessage.addListener(function(msg) {
     console.log("message recieved: " + msg.msg + ", target: " + msg.updateTarget + ", time: " + msg.time);
     if (msg.msg == "updateTime") {
         updateTime(msg.updateTarget, msg.time);
+        saveTime(msg.updateTarget);
     }
 
     response = {
