@@ -2,7 +2,6 @@ var addictionPage = false;
 var startTime = null;
 var endTime = null;
 var urlOfLastTab;
-var observedUrls = ["vk.com", "www.youtube.com"];
 var observedObj = null;
 chrome.storage.local.get("observedObj", function(result) {
     if (!result["observedObj"]) {
