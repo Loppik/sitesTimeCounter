@@ -2,17 +2,17 @@ var addictionPage = false;
 var startTime = null;
 var endTime = null;
 var urlOfLastTab;
-var observedObj = null;
-chrome.storage.local.get("observedObj", function(result) {
-    if (!result["observedObj"]) {
-        chrome.storage.local.set({ observedObj: [] });
-        observedObj = [];
-    } else if(result["observedObj"].length > 0) {
-        observedObj = result["observedObj"];
-    } else {
-        observedObj = [];
-    }
+var observedObj = loadObservedObj();
+
+chrome.extension.onConnect.addListener(function(port) {
+    console.log("Connected 2 .....");
+    port.onMessage.addListener(function(msg) {
+        console.log(msg.msg + " .... 2");
+        observedObj = loadObservedObj();
+    });
 });
+
+
 
 /* Listener of messages from content script 
 chrome.browserAction.onClicked.addListener(function() {
@@ -90,4 +90,18 @@ function sendMessage(target, time) {
     chrome.tabs.sendMessage(tab.id, msg);
     alert("-")
     */
+}
+
+function loadObservedObj () {
+    chrome.storage.local.get("observedObj", function(result) {
+        if (!result["observedObj"]) {
+            chrome.storage.local.set({ observedObj: [] });
+            observedObj = [];
+        } else if(result["observedObj"].length > 0) {
+            observedObj = result["observedObj"];
+        } else {
+            observedObj = [];
+        }
+    });
+    return observedObj;
 }

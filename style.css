@@ -26,11 +26,24 @@
     margin-left: 5px;
 }
 
-#addbtn {
+#block_adding {
     width: 200px;
+    height: 100px;
+}
+
+#addbtn {
+    width: 100%;
     height: 30px;
     background-color: rgb(0, 190, 0);
     color: white;
     font-size: 14px;
     font-weight: bold;
+}
+
+#url_new_block {
+    height: 30px;
+}
+
+#name_new_block {
+    height: 30px;
 }
