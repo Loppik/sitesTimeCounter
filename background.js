@@ -7,8 +7,10 @@ var observedObj = loadObservedObj();
 chrome.extension.onConnect.addListener(function(port) {
     console.log("Connected 2 .....");
     port.onMessage.addListener(function(msg) {
-        console.log(msg.msg + " .... 2");
-        observedObj = loadObservedObj();
+        if (msg.msg == "updateObservedObj") {
+            console.log(msg.msg + " .... 2");
+            observedObj = loadObservedObj();
+        }
     });
 });
 
@@ -58,11 +60,19 @@ chrome.tabs.onActivated.addListener(function(activeInfo) {
 });
 
 function timeUpdate(urlOfLastTab, startTime, endTime) {
+    /* Нрмально, вернуть!
+    observedObj.forEach(function(object) {
+        if (urlOfLastTab == object.url) {
+            
+        }
+    });
+    */
+   console.log("last url: " + urlOfLastTab);
     if (urlOfLastTab == "vk.com") {
         sendMessage("vk", endTime.getTime() - startTime.getTime())
     }
     if (urlOfLastTab == "www.youtube.com") {
-        sendMessage("youtube", endTime.getTime() - startTime.getTime())
+        sendMessage("you", endTime.getTime() - startTime.getTime())
     }
 }
 

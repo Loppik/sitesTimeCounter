@@ -4,7 +4,6 @@ function updateTime(updateTarget, time) {
     var oneHour = 3600000;
     var oneMinute = 60000;
     var oneSecond = 1000;
-
     var target = document.getElementById(updateTarget);
 
     var hours = parseInt(target.querySelector(".hours").innerHTML);
@@ -38,12 +37,23 @@ function updateTime(updateTarget, time) {
     target.querySelector(".seconds").innerHTML = seconds;
 }
 
-function saveTime(updateTarget) {
+function updateTimeInBrowserStorage(updateTarget) {
     var target = document.getElementById(updateTarget);
     var hours = target.querySelector(".hours").innerHTML;
     var minutes = target.querySelector(".minutes").innerHTML;
     var seconds = target.querySelector(".seconds").innerHTML;
-    chrome.storage.local.set(updateTarget, hours + ":" + minutes + ":" + seconds);
+    chrome.storage.local.get("observedObj", function(result) {
+        result["observedObj"].forEach(function(object) {
+            if (object.name == updateTarget) {
+                object.time = {
+                    hours: hours,
+                    minutes: minutes,
+                    seconds: seconds
+                };
+            }
+        });
+        chrome.storage.local.set({"observedObj": result["observedObj"]});
+    });
 }
 
 var port = chrome.extension.connect({
@@ -54,7 +64,7 @@ port.onMessage.addListener(function(msg) {
     console.log("message recieved: " + msg.msg + ", target: " + msg.updateTarget + ", time: " + msg.time);
     if (msg.msg == "updateTime") {
         updateTime(msg.updateTarget, msg.time);
-        saveTime(msg.updateTarget);
+        // updateTimeInBrowserStorage(msg.updateTarget);
     }
 
     response = {
