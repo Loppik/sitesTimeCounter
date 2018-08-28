@@ -72,7 +72,7 @@ function timeUpdate(urlOfLastTab, startTime, endTime) {
         sendMessage("vk", endTime.getTime() - startTime.getTime())
     }
     if (urlOfLastTab == "www.youtube.com") {
-        sendMessage("you", endTime.getTime() - startTime.getTime())
+        sendMessage("youtube", endTime.getTime() - startTime.getTime())
     }
 }
 
