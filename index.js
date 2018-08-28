@@ -8,31 +8,35 @@ function updateTimeInBrowserStorage(updateTarget, time) {
             if (object.name == updateTarget) {
                 while(time >= oneHour) {
                     time -= oneHour;
-                    object.hours += 1;
+                    object.time.hours += 1;
                 }
             
                 while(time >= oneMinute) {
                     time -= oneMinute;
-                    object.minutes += 1
+                    object.time.minutes += 1
                 }
-                if (object.minutes > 59) {
-                    object.minutes -= 60;
-                    object.hours += 1;
+                if (object.time.minutes > 59) {
+                    object.time.minutes -= 60;
+                    object.time.hours += 1;
                 }
             
                 while(time >= oneSecond) {
                     time -= oneSecond;
-                    object.seconds += 1;
+                    object.time.seconds += 1;
                 }
-                if (object.seconds > 59) {
-                    object.seconds -= 60;
-                    object.minutes += 1;
+                if (object.time.seconds > 59) {
+                    object.time.seconds -= 60;
+                    object.time.minutes += 1;
                 }
             }
         });
         console.log("Saved: ");
         console.log(result["observedObj"]);
         chrome.storage.local.set({"observedObj": result["observedObj"]});
+    });
+    chrome.storage.local.get("observedObj", function(result) {
+        console.log("after save: ");
+        console.log(result["observedObj"]);
     });
 }
 
@@ -42,9 +46,9 @@ function updateTimeInPopUp(updateTarget) {
             if (object.name == updateTarget) {
                 console.log(object);
                 var target = document.getElementById(updateTarget);
-                target.querySelector(".hours").innerHTML = object.hours;
-                target.querySelector(".minutes").innerHTML = object.minutes;
-                target.querySelector(".seconds").innerHTML = object.seconds;
+                target.querySelector(".hours").innerHTML = object.time.hours;
+                target.querySelector(".minutes").innerHTML = object.time.minutes;
+                target.querySelector(".seconds").innerHTML = object.time.seconds;
             }
         });
     });
@@ -78,13 +82,14 @@ function resetTimeCounter() {
         result["observedObj"].forEach(function(object) {
             object.time = newTime;
         });
+        chrome.storage.local.set({"observedObj": result["observedObj"]});
     });
 }
 
 chrome.storage.local.get("dayOfLastReset", function(result) {
     if (result["dayOfLastReset"]) {
         chrome.storage.local.get("dayOfLastReset", function(result) {
-            console.log(result["dayOfLastReset"]);
+            console.log(new Date().getDate() + " > " + result["dayOfLastReset"]);
             if (new Date().getDate() > result["dayOfLastReset"]) {
                 resetTimeCounter();
                 chrome.storage.local.set({ "dayOfLastReset": new Date().getDate() });

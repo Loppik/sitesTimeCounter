@@ -86,6 +86,7 @@ function sendMessage(target, time) {
     chrome.extension.onConnect.addListener(function(port) {
         console.log("Connected .....");
         port.postMessage(msg);
+        msg.msg = "al";
         console.log("message sended");
         port.onMessage.addListener(function(msg) {
             console.log(msg.msg + " .... " + msg.status);
