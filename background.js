@@ -4,18 +4,6 @@ var endTime = null;
 var urlOfLastTab;
 var observedObj = loadObservedObj();
 
-chrome.extension.onConnect.addListener(function(port) {
-    console.log("Connected 2 .....");
-    port.onMessage.addListener(function(msg) {
-        if (msg.msg == "updateObservedObj") {
-            console.log(msg.msg + " .... 2");
-            observedObj = loadObservedObj();
-        }
-    });
-});
-
-
-
 /* Listener of messages from content script 
 chrome.browserAction.onClicked.addListener(function() {
     msg = {
@@ -24,6 +12,15 @@ chrome.browserAction.onClicked.addListener(function() {
     }
     chrome.tabs.sendMessage(tab.id, msg);
 })
+*/
+
+/* Send message to content script
+msg = {
+    selector: selector,
+    time: time
+}
+chrome.tabs.sendMessage(tab.id, msg);
+alert("-")
 */
 
 console.log("back started");
@@ -69,39 +66,17 @@ function timeUpdate(urlOfLastTab, startTime, endTime) {
     */
    console.log("last url: " + urlOfLastTab);
     if (urlOfLastTab == "vk.com") {
-        sendMessage("vk", endTime.getTime() - startTime.getTime())
+        updateTimeInBrowserStorage("vk", endTime.getTime() - startTime.getTime())
     }
     if (urlOfLastTab == "www.youtube.com") {
-        sendMessage("youtube", endTime.getTime() - startTime.getTime())
+        updateTimeInBrowserStorage("youtube", endTime.getTime() - startTime.getTime())
     }
 }
 
-function sendMessage(target, time) {
-    var msg = {
-        msg: "updateTime",
-        updateTarget: target,
-        time: time
-    }
 
-    chrome.extension.onConnect.addListener(function(port) {
-        console.log("Connected .....");
-        port.postMessage(msg);
-        msg.msg = "al";
-        console.log("message sended");
-        port.onMessage.addListener(function(msg) {
-            console.log(msg.msg + " .... " + msg.status);
-        });
-    });
     
-    /* Send message to content script
-    msg = {
-        selector: selector,
-        time: time
-    }
-    chrome.tabs.sendMessage(tab.id, msg);
-    alert("-")
-    */
-}
+    
+
 
 function loadObservedObj () {
     chrome.storage.local.get("observedObj", function(result) {
@@ -115,4 +90,46 @@ function loadObservedObj () {
         }
     });
     return observedObj;
+}
+
+function updateTimeInBrowserStorage(updateTarget, time) {
+    var oneHour = 3600000;
+    var oneMinute = 60000;
+    var oneSecond = 1000;
+
+    chrome.storage.local.get("observedObj", function(result) {
+        result["observedObj"].forEach(function(object) {
+            if (object.name == updateTarget) {
+                while(time >= oneHour) {
+                    time -= oneHour;
+                    object.time.hours += 1;
+                }
+            
+                while(time >= oneMinute) {
+                    time -= oneMinute;
+                    object.time.minutes += 1
+                }
+                if (object.time.minutes > 59) {
+                    object.time.minutes -= 60;
+                    object.time.hours += 1;
+                }
+            
+                while(time >= oneSecond) {
+                    time -= oneSecond;
+                    object.time.seconds += 1;
+                }
+                if (object.time.seconds > 59) {
+                    object.time.seconds -= 60;
+                    object.time.minutes += 1;
+                }
+            }
+        });
+        console.log("Saved: ");
+        console.log(result["observedObj"]);
+        chrome.storage.local.set({"observedObj": result["observedObj"]});
+    });
+    chrome.storage.local.get("observedObj", function(result) {
+        console.log("after save: ");
+        console.log(result["observedObj"]);
+    });
 }
